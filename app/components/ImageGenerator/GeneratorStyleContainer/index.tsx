@@ -13,10 +13,12 @@ import { lockIcon, shapeIcon } from '../../../utils/images'
 // import { sleep } from '../../../utils/interface';
 import { toast } from 'react-toastify'
 // import { useAccount, useBalance, useNetwork } from 'wagmi';
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { now } from 'moment';
 // import { polygonMainnetChainId, bscTestnetChainId, tokenAddresses, bscMainnetChainId } from '../../../utils/config';
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useWallet, useConnection } from "@solana/wallet-adapter-react";
+import {PublicKey} from '@solana/web3.js';
+import { TOKEN_MINT_ADDRESS } from '../../Modal/solAddress';
 
 const GeneratorStyleContainer = () => {
     const {
@@ -42,6 +44,27 @@ const GeneratorStyleContainer = () => {
     //     // @ts-ignore
     //     token: tokenAddresses[chainId],
     // })
+    const {connection}=useConnection();
+    const [tokenBalance, setTokenBalance] = useState(0);
+
+    const getTokenBalance = async() => {
+        if(publicKey) {
+            const TOKEN_MINT = new PublicKey(TOKEN_MINT_ADDRESS);
+            const tokenList = await connection.getTokenAccountsByOwner(publicKey, { mint: TOKEN_MINT });
+
+            if (tokenList.value.length > 0) {
+                const info = await connection.getTokenAccountBalance(tokenList.value[0].pubkey);
+                if (! info.value.uiAmount)
+                    return 0
+                return info.value.uiAmount;
+            }
+            else {
+                return 0;
+            }
+        } else {
+            return 0;
+        }
+    };
 
     useEffect(() => {
         if (publicKey) {
@@ -64,7 +87,18 @@ const GeneratorStyleContainer = () => {
     }
 
     useEffect(() => {
-        if (publicKey && 10000 >= UnlimitedTokenAmount) {
+        const fetchBalance = async () => {
+            try {
+              const balance = await getTokenBalance();
+              setTokenBalance(balance);
+            } catch (error) {
+              console.error('Error fetching balance:', error);
+            }
+        };
+      
+        fetchBalance();
+        
+        if (publicKey && tokenBalance >= UnlimitedTokenAmount) {
             setStatus("Unlimited Access");
             setExpireDate(Date.parse(getExpireDate()));
             checkUser()
@@ -89,13 +123,16 @@ const GeneratorStyleContainer = () => {
         let params = {}
         if(publicKey)
             params = { wallet_address: publicKey.toString() };
+
+        const tokenBalance = await getTokenBalance();
+        
         await axios.post("/api/account_info/get", params)
             .then(response => {
                 setFreeImageAmount(response.data.free_image_amount);
                 setPaidImageAmount(response.data.paid_image_amount);
                 setExpireDate(Date.parse(response.data.expire_date));
 
-                if (publicKey && 10000 >= UnlimitedTokenAmount) {
+                if (publicKey && tokenBalance >= UnlimitedTokenAmount) {
                     setStatus("Unlimited Access");
                     setExpireDate(Date.parse(getExpireDate()));
                 } else if (Date.parse(response.data.expire_date) > now()) {

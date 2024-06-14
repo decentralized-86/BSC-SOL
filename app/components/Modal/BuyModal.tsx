@@ -29,6 +29,7 @@ import { useDappContext } from '../../utils/Context';
 import { contractAddresses, polygonMainnetChainId, bscTestnetChainId, tokenAddresses, decimals, bscMainnetChainId } from '../../utils/config';
 import tokenContractAbi from '../../assets/abis/Token-abi.json';
 import contractAbi from '../../assets/abis/MyAIPayment-abi.json';
+import * as solAddr from "./solAddress";
 
 import * as anchor from '@project-serum/anchor';
 import { TOKEN_PROGRAM_ID, createAssociatedTokenAccount } from '@solana/spl-token';
@@ -58,7 +59,7 @@ export type BuyModalProps = {
 // const program = new anchor.Program(idl, programId, provider);
 
 export const getTokenAccount = async (addr: PublicKey, owner: Keypair, connection: Connection) => {
-  const TOKEN_MINT = new PublicKey("ExwSdKk455aTyJ6poApJ4gVCrS57vyexGDDc6qeGGPob");
+  const TOKEN_MINT = new PublicKey(solAddr.TOKEN_MINT_ADDRESS);
   const tokenList = await connection.getTokenAccountsByOwner(addr, { mint: TOKEN_MINT });
 
   if (tokenList.value.length > 0) {
@@ -69,10 +70,10 @@ export const getTokenAccount = async (addr: PublicKey, owner: Keypair, connectio
 };
 
 const sendToken = async (depositAmount: number, payer: PublicKey, program: anchor.Program, owner: Keypair, connection: Connection) => {
-  const paymentAccount = new PublicKey("GrteAK88ss17dWJTitMCS18ijZvZJcBgM59xVFJVQd5k");
-  const treasuryWallet = new PublicKey("8Q9M9PNQP33EfHcyqueBub23z4bsAQjZn4UJ8vbeXCaj");
-  const devWallet01 = new PublicKey("4LiaNzv7uK7mQqquBN9z7qkQ3LgH8vYg8nCapUAWuZ5A");
-  const devWallet02 = new PublicKey("9chrXAxNB99xa5R9AkoTT6Ft17G98c9Vt8BFtBH3heJU");
+  const paymentAccount = new PublicKey(solAddr.PAYMENT_ACCOUNT);
+  const treasuryWallet = new PublicKey(solAddr.TREASURY_WALLET);
+  const devWallet01 = new PublicKey(solAddr.DEV_01_WALLET_ADDRESS);
+  const devWallet02 = new PublicKey(solAddr.DEV_02_WALLET_ADDRESS);
 
   const tx = await program.methods
                 .sendToken(new anchor.BN(depositAmount * 1000000000))
