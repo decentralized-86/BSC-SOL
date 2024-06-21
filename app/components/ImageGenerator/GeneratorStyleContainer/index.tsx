@@ -47,6 +47,24 @@ const GeneratorStyleContainer = () => {
     const {connection}=useConnection();
     const [tokenBalance, setTokenBalance] = useState(0);
 
+    useEffect(() => {
+        const fetchBalance = async () => {
+            try {
+              const balance = await getTokenBalance();
+              console.log("Token Balance: " + balance)
+              setTokenBalance(balance);
+            } catch (error) {
+              console.error('Error fetching balance:', error);
+            }
+        };
+      
+        fetchBalance();
+
+        console.log("Use Effect");
+        console.log(tokenBalance);
+    }, [publicKey]);
+
+
     const getTokenBalance = async() => {
         if(publicKey) {
             const TOKEN_MINT = new PublicKey(TOKEN_MINT_ADDRESS);
@@ -87,18 +105,7 @@ const GeneratorStyleContainer = () => {
     }
 
     useEffect(() => {
-        const fetchBalance = async () => {
-            try {
-              const balance = await getTokenBalance();
-              setTokenBalance(balance);
-            } catch (error) {
-              console.error('Error fetching balance:', error);
-            }
-        };
-      
-        fetchBalance();
-        
-        if (publicKey && tokenBalance >= UnlimitedTokenAmount) {
+        if (publicKey && 1000 >= UnlimitedTokenAmount) {
             setStatus("Unlimited Access");
             setExpireDate(Date.parse(getExpireDate()));
             checkUser()
@@ -106,9 +113,7 @@ const GeneratorStyleContainer = () => {
     }, [publicKey]);
 
     const checkUser = async () => {
-        let params = {}
-        if(publicKey)
-            params = { wallet_address: publicKey.toString() };
+        let params = { wallet_address: publicKey?.toString() };
         const response = await axios.post("/api/account_info/get", params);
         if (!(response.data.free_image_amount >= 0)) {
             await axios.post("/api/account_info/signup", params);
@@ -120,9 +125,7 @@ const GeneratorStyleContainer = () => {
     }
 
     const getInfoData = async () => {
-        let params = {}
-        if(publicKey)
-            params = { wallet_address: publicKey.toString() };
+        let params = { wallet_address: publicKey?.toString() };
 
         const tokenBalance = await getTokenBalance();
         
@@ -132,7 +135,7 @@ const GeneratorStyleContainer = () => {
                 setPaidImageAmount(response.data.paid_image_amount);
                 setExpireDate(Date.parse(response.data.expire_date));
 
-                if (publicKey && tokenBalance >= UnlimitedTokenAmount) {
+                if (publicKey && 1000 >= UnlimitedTokenAmount) {
                     setStatus("Unlimited Access");
                     setExpireDate(Date.parse(getExpireDate()));
                 } else if (Date.parse(response.data.expire_date) > now()) {
