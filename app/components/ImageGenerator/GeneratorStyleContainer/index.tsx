@@ -17,7 +17,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { now } from 'moment';
 // import { polygonMainnetChainId, bscTestnetChainId, tokenAddresses, bscMainnetChainId } from '../../../utils/config';
 import { useWallet, useConnection } from "@solana/wallet-adapter-react";
-import {PublicKey} from '@solana/web3.js';
+import { PublicKey } from '@solana/web3.js';
 import { TOKEN_MINT_ADDRESS } from '../../Modal/solAddress';
 
 const GeneratorStyleContainer = () => {
@@ -31,7 +31,7 @@ const GeneratorStyleContainer = () => {
         status, setStatus
     } = useDappContext();
     // const { address, } = useAccount();
-    const {publicKey}=useWallet();
+    const { publicKey } = useWallet();
     const [freeImageAmount, setFreeImageAmount] = useState(0);
     const [paidImageAmount, setPaidImageAmount] = useState(0);
     const [expireDate, setExpireDate] = useState(now());
@@ -44,20 +44,20 @@ const GeneratorStyleContainer = () => {
     //     // @ts-ignore
     //     token: tokenAddresses[chainId],
     // })
-    const {connection}=useConnection();
+    const { connection } = useConnection();
     const [tokenBalance, setTokenBalance] = useState(0);
 
     useEffect(() => {
         const fetchBalance = async () => {
             try {
-              const balance = await getTokenBalance();
-              console.log("Token Balance: " + balance)
-              setTokenBalance(balance);
+                const balance = await getTokenBalance();
+                console.log("Token Balance: " + balance)
+                setTokenBalance(balance);
             } catch (error) {
-              console.error('Error fetching balance:', error);
+                console.error('Error fetching balance:', error);
             }
         };
-      
+
         fetchBalance();
 
         console.log("Use Effect");
@@ -65,14 +65,14 @@ const GeneratorStyleContainer = () => {
     }, [publicKey]);
 
 
-    const getTokenBalance = async() => {
-        if(publicKey) {
+    const getTokenBalance = async () => {
+        if (publicKey) {
             const TOKEN_MINT = new PublicKey(TOKEN_MINT_ADDRESS);
             const tokenList = await connection.getTokenAccountsByOwner(publicKey, { mint: TOKEN_MINT });
 
             if (tokenList.value.length > 0) {
                 const info = await connection.getTokenAccountBalance(tokenList.value[0].pubkey);
-                if (! info.value.uiAmount)
+                if (!info.value.uiAmount)
                     return 0
                 return info.value.uiAmount;
             }
@@ -128,7 +128,7 @@ const GeneratorStyleContainer = () => {
         let params = { wallet_address: publicKey?.toString() };
 
         const tokenBalance = await getTokenBalance();
-        
+
         await axios.post("/api/account_info/get", params)
             .then(response => {
                 setFreeImageAmount(response.data.free_image_amount);
@@ -253,7 +253,7 @@ const GeneratorStyleContainer = () => {
             padding={['15px', '15px', '15px', '15px', '15px']}
         // margin={'auto'}
         >
-            <Flex
+            {/* <Flex
                 marginTop={'25px'}
                 marginBottom={'15px'}
             >
@@ -289,11 +289,11 @@ const GeneratorStyleContainer = () => {
                     <option value='small'>Small (256px) </option>
                     <option value='medium'>Medium (512px) </option>
                     <option value='large'>Large (1024px)</option>
-                    {/* <option value='option4'>Large (1024)</option> */}
-                </Select>
-            </Flex>
+                    <option value='option4'>Large (1024)</option> 
+                    </Select> 
+        </Flex > */}
 
-            <Flex
+            < Flex
                 marginTop={'25px'}
                 marginBottom={'10px'}
             >
@@ -309,7 +309,7 @@ const GeneratorStyleContainer = () => {
                 >
                     Choose a style.
                 </Flex>
-            </Flex>
+            </Flex >
 
             <Flex
                 // maxWidth={'945px'}

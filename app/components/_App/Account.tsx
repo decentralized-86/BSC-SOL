@@ -12,6 +12,7 @@ import BuyModal from '../Modal/BuyModal'
 import dynamic from 'next/dynamic';
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useWallet } from '@solana/wallet-adapter-react';
+import { useDappContext } from '../../utils/Context';
 
 // const WalletMultiButtonDynamic = dynamic(
 //   async () => (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
@@ -31,20 +32,42 @@ const Account = () => {
 
   // return <button onClick={onClick}>Connect Wallet</button>;
 
-  const {publicKey} = useWallet();
+  const { publicKey } = useWallet();
 
   const {
     isOpen: isOpen,
     onOpen: onOpen,
     onClose: onClose,
   } = useDisclosure();
+
+
+  const {
+    status, setStatus
+  } = useDappContext();
   return (
     <>
-    <div>
-      {(() => {
-              if (publicKey) {
-                return (
-                  <>
+      <Flex>
+        {(() => {
+          if (publicKey) {
+            return (
+              <>
+                <Flex
+                  gap={['5px', '10px', '20px', '20px', '20px', '20px']}
+                  alignItems={'center'}
+                >
+                  <Flex
+                    color={'white'}
+                    fontSize={['12px', '14px', '16px', '18px']}
+                    fontWeight="500px"
+                    lineHeight={'25px'}
+                    textAlign={'center'}
+                    className={'sticky-font'}
+                  >
+
+                    {status}
+                  </Flex>
+
+                  {/* <div>{status}</div> */}
                   <Button
                     onClick={onOpen}
                     fontWeight="500px"
@@ -65,21 +88,23 @@ const Account = () => {
                   >
                     Buy
                   </Button>
-                  <BuyModal
-                    isOpenBuyModal={isOpen}
-                    onCloseBuyModal={onClose}
-                  />
-                  </>
-                );
-              }
-              return (
-                <>
-                </>
-              );
-            })()}
-      <WalletMultiButton />
-    </div>
-  </>
+                </Flex >
+                <BuyModal
+                  isOpenBuyModal={isOpen}
+                  onCloseBuyModal={onClose}
+                />
+              </>
+              // </Flex >
+            );
+          }
+          return (
+            <>
+            </>
+          );
+        })()}
+        <WalletMultiButton />
+      </Flex>
+    </>
   )
 };
 
