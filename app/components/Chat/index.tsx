@@ -10,7 +10,7 @@ import { useDappContext } from '../../utils/Context';
 
 interface ChatProps {
     version: string;
-  }
+}
 
 const Chat = (props: ChatProps) => {
     const {
@@ -18,8 +18,8 @@ const Chat = (props: ChatProps) => {
         status, setStatus
     } = useDappContext();
     // const { address, } = useAccount();
-    const {publicKey}=useWallet();
-    
+    const { publicKey } = useWallet();
+
     const [messages, setMessages] = useState([
         { role: "assistant", content: "Hi, My Name is MyAi." },
         { role: "assistant", content: "How can I help you?" },
@@ -37,17 +37,17 @@ const Chat = (props: ChatProps) => {
         }
     }, []);
 
-useEffect(() => {
-    if (props.version) {
-        setVersion(props.version);
-    }
-    if (props.version != version) {
-        setMessages([
-            { role: "assistant", content: "Hi, My Name is MyAi." },
-            { role: "assistant", content: "How can I help you?" },
-        ])
-    }
-}, [props]);
+    useEffect(() => {
+        if (props.version) {
+            setVersion(props.version);
+        }
+        if (props.version != version) {
+            setMessages([
+                { role: "assistant", content: "Hi, My Name is MyAi." },
+                { role: "assistant", content: "How can I help you?" },
+            ])
+        }
+    }, [props]);
 
     useEffect(() => {
         if (publicKey) {
@@ -61,7 +61,7 @@ useEffect(() => {
 
     const getInfoData = async () => {
         let params = {}
-        if(publicKey)
+        if (publicKey)
             params = { wallet_address: publicKey.toString() };
         await axios.post("/api/account_info/get", params)
             .then(response => {

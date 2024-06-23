@@ -4,9 +4,10 @@ export default async function handler(req, res) {
 
     try {
         const { wallet_address } = req.body;
+        console.log("wallet_address", wallet_address)
         const response = await prisma.info.findUnique({
             where: { wallet_address: wallet_address },
-            select : {
+            select: {
                 free_image_amount: true,
                 paid_image_amount: true,
                 free_chat_time: true,
@@ -25,7 +26,7 @@ export default async function handler(req, res) {
 
         res.status(500).json({
             success: false,
-            message: "Something went wrong "+error.message,
+            message: "Something went wrong " + error.message,
         });
     }
 };

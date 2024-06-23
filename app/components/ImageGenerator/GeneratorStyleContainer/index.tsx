@@ -64,6 +64,12 @@ const GeneratorStyleContainer = () => {
         console.log(tokenBalance);
     }, [publicKey]);
 
+    useEffect(() => {
+        if (publicKey) {
+            checkUser();
+        }
+    }, [publicKey]);
+
 
     const getTokenBalance = async () => {
         if (publicKey) {
@@ -105,7 +111,7 @@ const GeneratorStyleContainer = () => {
     }
 
     useEffect(() => {
-        if (publicKey && 1000 >= UnlimitedTokenAmount) {
+        if (publicKey && tokenBalance >= UnlimitedTokenAmount) {
             setStatus("Unlimited Access");
             setExpireDate(Date.parse(getExpireDate()));
             checkUser()
@@ -135,7 +141,7 @@ const GeneratorStyleContainer = () => {
                 setPaidImageAmount(response.data.paid_image_amount);
                 setExpireDate(Date.parse(response.data.expire_date));
 
-                if (publicKey && 1000 >= UnlimitedTokenAmount) {
+                if (publicKey && tokenBalance >= UnlimitedTokenAmount) {
                     setStatus("Unlimited Access");
                     setExpireDate(Date.parse(getExpireDate()));
                 } else if (Date.parse(response.data.expire_date) > now()) {
