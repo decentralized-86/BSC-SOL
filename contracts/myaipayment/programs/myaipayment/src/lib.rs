@@ -1,8 +1,8 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token::{self, Token, TokenAccount, Transfer};
+use anchor_spl::token::{self, Token, Transfer};
 use spl_associated_token_account;
 
-declare_id!("2zUiVTAqWHxn7BT3FPcn4L3BNezeUoyKpGuqCbxHjPdp");
+declare_id!("62hQ5gqobREUgYGD6hktcjV6zVraYysAp6NUqghn5H2a");
 
 #[program]
 pub mod myaipayment {
@@ -204,13 +204,17 @@ pub struct SendToken<'info> {
     #[account(mut)]
     pub payment: Account<'info, MyAiPayment>,
     #[account(mut)]
-    pub payer_token_account: Account<'info, TokenAccount>,
+    /// CHECK: Should be treated as token account
+    pub payer_token_account: AccountInfo<'info>,
     #[account(mut)]
-    pub treasury_wallet_token_account: Account<'info, TokenAccount>,
+    /// CHECK: Should be treated as token account
+    pub treasury_wallet_token_account: AccountInfo<'info>,
     #[account(mut)]
-    pub dev_wallet_1_token_account: Account<'info, TokenAccount>,
+    /// CHECK: Should be treated as token account
+    pub dev_wallet_1_token_account: AccountInfo<'info>,
     #[account(mut)]
-    pub dev_wallet_2_token_account: Account<'info, TokenAccount>,
+    /// CHECK: Should be treated as token account
+    pub dev_wallet_2_token_account: AccountInfo<'info>,
     pub token_program: Program<'info, Token>,
 }
 

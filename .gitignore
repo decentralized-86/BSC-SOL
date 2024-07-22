@@ -1,2 +1,10 @@
 app/.next/
 app/node_modules/
+
+contracts/myaipayment/.anchor
+contracts/myaipayment/.DS_Store
+contracts/myaipayment/target
+contracts/myaipayment/**/*.rs.bk
+contracts/myaipayment/node_modules
+contracts/myaipayment/test-ledger
+contracts/myaipayment/.yarn
